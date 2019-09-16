@@ -101,31 +101,3 @@ Map Operation Examples
     }
 
 In [playground](https://play.golang.org/p/mu5JU1DMYrr).
-
-
-Decoding Example
-----------------
-
-    import (
-        "strings"
-        "gopkg.in/yaml.v3"
-        "github.com/tliron/yamlkeys"
-    )
-    
-    func DecodeString(s string) (map[interface{}]interface{}, error) {
-        var node yaml.Node
-        decoder := yaml.NewDecoder(strings.NewReader(s))
-        if err := decoder.Decode(&node); err == nil {
-            if data, err := yamlkeys.DecodeNode(&node); err == nil {
-                if map_, ok := data.(map[interface{}]interface{}); ok {
-                    return map_, nil
-                } else {
-                    return nil, err
-                }
-            } else {
-                return nil, err
-            }
-        } else {
-            return nil, err
-        }
-    }

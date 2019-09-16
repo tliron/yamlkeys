@@ -2,20 +2,21 @@ package yamlkeys
 
 import (
 	"fmt"
+	"io"
 	"strings"
 
 	"gopkg.in/yaml.v3"
 )
 
-func DecodeString(s string) (Map, error) {
+func Decode(reader io.Reader) (Map, error) {
 	var node yaml.Node
-	decoder := yaml.NewDecoder(strings.NewReader(s))
+	decoder := yaml.NewDecoder(reader)
 	if err := decoder.Decode(&node); err == nil {
 		if data, err := DecodeNode(&node); err == nil {
 			if map_, ok := data.(Map); ok {
 				return map_, nil
 			} else {
-				return nil, err
+				return nil, fmt.Errorf("malformed YAML: not a map: %T", data)
 			}
 		} else {
 			return nil, err
@@ -23,6 +24,10 @@ func DecodeString(s string) (Map, error) {
 	} else {
 		return nil, err
 	}
+}
+
+func DecodeString(s string) (Map, error) {
+	return Decode(strings.NewReader(s))
 }
 
 func DecodeNode(node *yaml.Node) (interface{}, error) {
