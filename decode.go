@@ -118,7 +118,7 @@ func DecodeNode(node *yaml.Node) (interface{}, error) {
 		return map_, nil
 
 	case yaml.SequenceNode:
-		var slice []interface{}
+		slice := make([]interface{}, 0)
 		for _, childNode := range node.Content {
 			if value, err := DecodeNode(childNode); err == nil {
 				slice = append(slice, value)
