@@ -51,7 +51,7 @@ func MapPut(map_ Map, key interface{}, value interface{}) (interface{}, bool) {
 
 			var key_ Key
 			var err error
-			if key_, err = NewYamlKey(key); err == nil {
+			if key_, err = NewYAMLKey(key); err == nil {
 				map_[key_] = value
 			} else {
 				panic(err)

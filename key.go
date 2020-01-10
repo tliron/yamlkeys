@@ -32,20 +32,20 @@ type Key interface {
 }
 
 //
-// YamlKey
+// YAMLKey
 //
 
-type YamlKey struct {
+type YAMLKey struct {
 	Data interface{}
 	Text string
 }
 
-func NewYamlKey(data interface{}) (*YamlKey, error) {
+func NewYAMLKey(data interface{}) (*YAMLKey, error) {
 	var writer strings.Builder
 	encoder := yaml.NewEncoder(&writer)
 	encoder.SetIndent(1)
 	if err := encoder.Encode(data); err == nil {
-		return &YamlKey{
+		return &YAMLKey{
 			Data: data,
 			Text: writer.String(),
 		}, nil
@@ -55,16 +55,16 @@ func NewYamlKey(data interface{}) (*YamlKey, error) {
 }
 
 // Key interface
-func (self *YamlKey) GetKeyData() interface{} {
+func (self *YAMLKey) GetKeyData() interface{} {
 	return self.Data
 }
 
 // fmt.Stringify interface
-func (self *YamlKey) String() string {
+func (self *YAMLKey) String() string {
 	return self.Text
 }
 
 // yaml.Marshaler interface
-func (self *YamlKey) MarshalYAML() (interface{}, error) {
+func (self *YAMLKey) MarshalYAML() (interface{}, error) {
 	return self.Data, nil
 }

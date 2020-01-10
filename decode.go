@@ -146,7 +146,7 @@ func DecodeKeyNode(node *yaml.Node) (interface{}, interface{}, error) {
 		if isBasicType(data) {
 			return data, nil, nil
 		} else {
-			key, err := NewYamlKey(data)
+			key, err := NewYAMLKey(data)
 			return key, data, err
 		}
 	} else {
