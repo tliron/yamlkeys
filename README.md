@@ -63,6 +63,16 @@ An alternative solution could use an entirely different map implementation, such
 pros vs. the cons we preferred the basic Go map.
 
 
+Multiple Documents
+------------------
+
+The go-yaml library's `decoder.Decode` function only decodes the first document it finds in the
+stream and then stops. For compatibility, we have kept the same behavior here.
+
+However, for convenience we also provide `DecodeAll` and `DecodeStringAll` functions that attempt
+to decode the entire stream.
+
+
 Map Operation Examples
 ----------------------
 
@@ -71,7 +81,8 @@ Map Operation Examples
     {complex1: 0, complex2: 2}: value2
     `
 
-    map_, _ := yamlkeys.DecodeString(text)
+    data, _ := yamlkeys.DecodeString(text)
+    map_ := data.(yamlkeys.Map)
 
     // Iteration
     for k, v := range map_ {

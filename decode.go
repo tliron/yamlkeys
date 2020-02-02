@@ -8,26 +8,41 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func Decode(reader io.Reader) (Map, error) {
+func Decode(reader io.Reader) (interface{}, error) {
 	var node yaml.Node
 	decoder := yaml.NewDecoder(reader)
 	if err := decoder.Decode(&node); err == nil {
-		if data, err := DecodeNode(&node); err == nil {
-			if map_, ok := data.(Map); ok {
-				return map_, nil
-			} else {
-				return nil, fmt.Errorf("malformed YAML: not a map: %T", data)
-			}
-		} else {
-			return nil, err
-		}
+		return DecodeNode(&node)
 	} else {
 		return nil, err
 	}
 }
 
-func DecodeString(s string) (Map, error) {
+func DecodeAll(reader io.Reader) ([]interface{}, error) {
+	decoder := yaml.NewDecoder(reader)
+	var values []interface{}
+	for {
+		var node yaml.Node
+		if err := decoder.Decode(&node); err == nil {
+			if value, err := DecodeNode(&node); err == nil {
+				values = append(values, value)
+			} else {
+				return nil, err
+			}
+		} else if err == io.EOF {
+			return values, nil
+		} else {
+			return nil, err
+		}
+	}
+}
+
+func DecodeString(s string) (interface{}, error) {
 	return Decode(strings.NewReader(s))
+}
+
+func DecodeStringAll(s string) ([]interface{}, error) {
+	return DecodeAll(strings.NewReader(s))
 }
 
 func DecodeNode(node *yaml.Node) (interface{}, error) {
@@ -36,27 +51,11 @@ func DecodeNode(node *yaml.Node) (interface{}, error) {
 		return DecodeNode(node.Alias)
 
 	case yaml.DocumentNode:
-		var slice []interface{}
-
-		for _, childNode := range node.Content {
-			if value, err := DecodeNode(childNode); err == nil {
-				slice = append(slice, value)
-			} else {
-				return nil, err
-			}
+		if len(node.Content) != 1 {
+			panic(fmt.Sprintf("malformed YAML @%d,%d: document content count is %d", node.Line, node.Column, len(node.Content)))
 		}
 
-		switch len(slice) {
-		case 1:
-			// Single document
-			return slice[0], nil
-		case 0:
-			// Empty
-			return make(Map), nil
-		default:
-			// Multiple documents
-			return slice, nil
-		}
+		return DecodeNode(node.Content[0])
 
 	case yaml.MappingNode:
 		map_ := make(Map)
