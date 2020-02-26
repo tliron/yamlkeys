@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
+
+rm --force "$ROOT/go.mod" "$ROOT/go.sum"
+
+cd "$HERE"
+go mod init github.com/tliron/yamlkeys
+go mod tidy

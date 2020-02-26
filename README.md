@@ -111,4 +111,4 @@ Map Operation Examples
         fmt.Printf("key = %v, value = %v\n", yamlkeys.KeyString(k), v)
     }
 
-In [playground](https://play.golang.org/p/mu5JU1DMYrr).
+In [playground](https://play.golang.org/p/QYpGZhLnrMB).
