@@ -59,6 +59,7 @@ func DecodeNode(node *yaml.Node) (interface{}, error) {
 
 	case yaml.MappingNode:
 		map_ := make(Map)
+		mergeMap := make(Map)
 
 		// Content is a slice of pairs of key followed by value
 		length := len(node.Content)
@@ -75,12 +76,12 @@ func DecodeNode(node *yaml.Node) (interface{}, error) {
 					// See: https://yaml.org/type/merge.html
 					switch value.(type) {
 					case Map:
-						MapMerge(map_, value.(Map), false)
+						MapMerge(mergeMap, value.(Map), false)
 
 					case []interface{}:
 						for _, v := range value.([]interface{}) {
 							if m, ok := v.(Map); ok {
-								MapMerge(map_, m, false)
+								MapMerge(mergeMap, m, false)
 							} else {
 								panic(fmt.Sprintf("malformed YAML @%d,%d: merge", node.Line, node.Column))
 							}
@@ -113,6 +114,8 @@ func DecodeNode(node *yaml.Node) (interface{}, error) {
 				return nil, err
 			}
 		}
+
+		MapMerge(map_, mergeMap, false)
 
 		return map_, nil
 
