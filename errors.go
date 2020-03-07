@@ -56,5 +56,13 @@ func NewDuplicateKeyErrorFor(key interface{}, node *yaml.Node) *DecodeError {
 
 // error interface
 func (self *DecodeError) Error() string {
-	return fmt.Sprintf("malformed YAML @%d,%d: %s", self.Line, self.Column, self.Message)
+	if self.Line != -1 {
+		if self.Column != -1 {
+			return fmt.Sprintf("malformed YAML @%d,%d: %s", self.Line, self.Column, self.Message)
+		} else {
+			return fmt.Sprintf("malformed YAML @%d: %s", self.Line, self.Message)
+		}
+	} else {
+		return fmt.Sprintf("malformed YAML: %s", self.Message)
+	}
 }
