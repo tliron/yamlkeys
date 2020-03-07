@@ -68,3 +68,13 @@ func (self *YAMLKey) String() string {
 func (self *YAMLKey) MarshalYAML() (interface{}, error) {
 	return self.Data, nil
 }
+
+// Utils
+
+func isSimpleKey(data interface{}) bool {
+	switch data.(type) {
+	case Map, Sequence:
+		return false
+	}
+	return true
+}

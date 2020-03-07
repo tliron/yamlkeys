@@ -63,6 +63,17 @@ An alternative solution could use an entirely different map implementation, such
 pros vs. the cons we preferred the basic Go map.
 
 
+Typed Errors
+------------
+
+The go-yaml library does not return typed errors, making it difficult to extract error information,
+such as the line and column in which an error occurred. For convenience we provide a `DecodeError`
+with this information.
+
+We do this not only for yamlkeys errors, but also convert go-yaml errors by parsing the error
+message string.
+
+
 Multiple Documents
 ------------------
 

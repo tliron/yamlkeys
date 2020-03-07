@@ -1,9 +1,7 @@
 package yamlkeys
 
-type Map = map[interface{}]interface{}
-
 func MapGet(map_ Map, key interface{}) (interface{}, bool) {
-	if isBasicType(key) {
+	if isSimpleKey(key) {
 		value, ok := map_[key]
 		return value, ok
 	} else {
@@ -22,7 +20,7 @@ func MapGet(map_ Map, key interface{}) (interface{}, bool) {
 }
 
 func MapPut(map_ Map, key interface{}, value interface{}) (interface{}, bool) {
-	if isBasicType(key) {
+	if isSimpleKey(key) {
 		if existing, ok := map_[key]; ok {
 			map_[key] = value
 			return existing, true
@@ -63,7 +61,7 @@ func MapPut(map_ Map, key interface{}, value interface{}) (interface{}, bool) {
 }
 
 func MapDelete(map_ Map, key interface{}) (interface{}, bool) {
-	if isBasicType(key) {
+	if isSimpleKey(key) {
 		if existing, ok := map_[key]; ok {
 			delete(map_, key)
 			return existing, true

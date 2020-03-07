@@ -1,24 +1,23 @@
 package yamlkeys
 
-func Clone(o interface{}) interface{} {
-	switch o.(type) {
+func Clone(value interface{}) interface{} {
+	switch value_ := value.(type) {
 	case Map:
-		c := make(Map)
-		for key, value := range o.(Map) {
+		clone := make(Map)
+		for key, value := range value_ {
 			key = KeyData(key)
-			MapPut(c, Clone(key), Clone(value))
+			MapPut(clone, Clone(key), Clone(value))
 		}
-		return c
+		return clone
 
-	case []interface{}:
-		list := o.([]interface{})
-		c := make([]interface{}, len(list))
-		for index, value := range list {
-			c[index] = Clone(value)
+	case Sequence:
+		clone := make([]interface{}, len(value_))
+		for index, value := range value_ {
+			clone[index] = Clone(value)
 		}
-		return c
+		return clone
 
 	default:
-		return o
+		return value
 	}
 }

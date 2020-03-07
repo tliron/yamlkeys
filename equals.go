@@ -1,20 +1,18 @@
 package yamlkeys
 
 func Equals(a interface{}, b interface{}) bool {
-	switch a.(type) {
+	switch a_ := a.(type) {
 	case Map:
 		if bMap, ok := b.(Map); ok {
-			aMap := a.(Map)
-
 			// Does A have all the keys that are in B?
 			for key := range bMap {
-				if _, ok := MapGet(aMap, key); !ok {
+				if _, ok := MapGet(a_, key); !ok {
 					return false
 				}
 			}
 
 			// Are all values in A equal to those in B?
-			for key, aValue := range aMap {
+			for key, aValue := range a_ {
 				if bValue, ok := MapGet(bMap, key); ok {
 					if !Equals(aValue, bValue) {
 						return false
@@ -29,16 +27,14 @@ func Equals(a interface{}, b interface{}) bool {
 			return false
 		}
 
-	case []interface{}:
+	case Sequence:
 		if bList, ok := b.([]interface{}); ok {
-			aList := a.([]interface{})
-
 			// Must have same lengths
-			if len(aList) != len(bList) {
+			if len(a_) != len(bList) {
 				return false
 			}
 
-			for index, aValue := range aList {
+			for index, aValue := range a_ {
 				bValue := bList[index]
 				if !Equals(aValue, bValue) {
 					return false

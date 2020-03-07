@@ -14,7 +14,7 @@ func Decode(reader io.Reader) (interface{}, error) {
 	if err := decoder.Decode(&node); err == nil {
 		return DecodeNode(&node)
 	} else {
-		return nil, err
+		return nil, WrapWithDecodeError(err)
 	}
 }
 
@@ -32,7 +32,7 @@ func DecodeAll(reader io.Reader) ([]interface{}, error) {
 		} else if err == io.EOF {
 			return values, nil
 		} else {
-			return nil, err
+			return nil, WrapWithDecodeError(err)
 		}
 	}
 }
@@ -74,12 +74,12 @@ func DecodeNode(node *yaml.Node) (interface{}, error) {
 			if value, err := DecodeNode(valueNode); err == nil {
 				if (keyNode.Kind == yaml.ScalarNode) && (keyNode.Tag == "!!merge") {
 					// See: https://yaml.org/type/merge.html
-					switch value.(type) {
+					switch value_ := value.(type) {
 					case Map:
-						MapMerge(mergeMap, value.(Map), false)
+						MapMerge(mergeMap, value_, false)
 
-					case []interface{}:
-						for _, v := range value.([]interface{}) {
+					case Sequence:
+						for _, v := range value_ {
 							if m, ok := v.(Map); ok {
 								MapMerge(mergeMap, m, false)
 							} else {
@@ -95,12 +95,12 @@ func DecodeNode(node *yaml.Node) (interface{}, error) {
 						// Check for duplicate keys
 						if keyData == nil {
 							if _, ok := map_[key]; ok {
-								return nil, errorDuplicateKey(keyNode, key)
+								return nil, NewDuplicateKeyErrorFor(key, keyNode)
 							}
 						} else {
 							for k := range map_ {
 								if Equals(keyData, KeyData(k)) {
-									return nil, errorDuplicateKey(keyNode, key)
+									return nil, NewDuplicateKeyErrorFor(key, keyNode)
 								}
 							}
 						}
@@ -120,7 +120,7 @@ func DecodeNode(node *yaml.Node) (interface{}, error) {
 		return map_, nil
 
 	case yaml.SequenceNode:
-		slice := make([]interface{}, 0)
+		slice := make(Sequence, 0)
 		for _, childNode := range node.Content {
 			if value, err := DecodeNode(childNode); err == nil {
 				slice = append(slice, value)
@@ -136,7 +136,7 @@ func DecodeNode(node *yaml.Node) (interface{}, error) {
 		if err := node.Decode(&value); err == nil {
 			return value, nil
 		} else {
-			return nil, err
+			return nil, WrapWithDecodeError(err)
 		}
 	}
 
@@ -145,7 +145,7 @@ func DecodeNode(node *yaml.Node) (interface{}, error) {
 
 func DecodeKeyNode(node *yaml.Node) (interface{}, interface{}, error) {
 	if data, err := DecodeNode(node); err == nil {
-		if isBasicType(data) {
+		if isSimpleKey(data) {
 			return data, nil, nil
 		} else {
 			key, err := NewYAMLKey(data)
@@ -154,18 +154,4 @@ func DecodeKeyNode(node *yaml.Node) (interface{}, interface{}, error) {
 	} else {
 		return nil, nil, err
 	}
-}
-
-// Utils
-
-func isBasicType(data interface{}) bool {
-	switch data.(type) {
-	case bool, string, int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64, float32, float64, complex64, complex128:
-		return true
-	}
-	return false
-}
-
-func errorDuplicateKey(node *yaml.Node, key interface{}) error {
-	return fmt.Errorf("malformed YAML @%d,%d: duplicate map key: %s", node.Line, node.Column, key)
 }
