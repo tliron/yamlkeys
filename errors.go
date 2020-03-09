@@ -13,16 +13,18 @@ func WrapWithDecodeError(err error) error {
 	// so the only way we can extract line number information is by parsing the error string
 
 	message := err.Error()
-	if strings.HasPrefix(message, "yaml: line ") {
-		suffix := message[11:]
-		if colon := strings.Index(suffix, ": "); colon != -1 {
-			line := suffix[:colon]
-			if row, err := strconv.Atoi(line); err == nil {
-				return NewDecodeError(suffix[colon+2:], row, -1)
+	if strings.HasPrefix(message, "yaml: ") {
+		if strings.HasPrefix(message, "yaml: line ") {
+			suffix := message[11:]
+			if colon := strings.Index(suffix, ": "); colon != -1 {
+				line := suffix[:colon]
+				if row, err := strconv.Atoi(line); err == nil {
+					return NewDecodeError(suffix[colon+2:], row, -1)
+				}
 			}
+		} else {
+			return NewDecodeError(message[6:], -1, -1)
 		}
-	} else if strings.HasPrefix(message, "yaml: ") {
-		return NewDecodeError(message[6:], -1, -1)
 	}
 
 	return err

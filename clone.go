@@ -11,7 +11,7 @@ func Clone(value interface{}) interface{} {
 		return clone
 
 	case Sequence:
-		clone := make([]interface{}, len(value_))
+		clone := make(Sequence, len(value_))
 		for index, value := range value_ {
 			clone[index] = Clone(value)
 		}

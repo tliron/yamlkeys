@@ -28,7 +28,7 @@ func Equals(a interface{}, b interface{}) bool {
 		}
 
 	case Sequence:
-		if bList, ok := b.([]interface{}); ok {
+		if bList, ok := b.(Sequence); ok {
 			// Must have same lengths
 			if len(a_) != len(bList) {
 				return false
