@@ -43,11 +43,11 @@ type YAMLKey struct {
 func NewYAMLKey(data interface{}) (*YAMLKey, error) {
 	var writer strings.Builder
 	encoder := yaml.NewEncoder(&writer)
-	encoder.SetIndent(1)
+	encoder.SetIndent(1) // as compact as possible
 	if err := encoder.Encode(data); err == nil {
 		return &YAMLKey{
 			Data: data,
-			Text: writer.String(),
+			Text: strings.TrimSuffix(writer.String(), "\n"),
 		}, nil
 	} else {
 		return nil, err
