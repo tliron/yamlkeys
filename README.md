@@ -27,7 +27,7 @@ This often-overlooked feature of YAML is required by certain YAML-based formats,
 [TOSCA](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/TOSCA-Simple-Profile-YAML-v1.3.html#_Schema_Definition).
 
 Importantly, the basic Go map is still used here in order to allow for broadest compatibility
-with similar parsers, such as Go's default [JSON parser](https://golang.org/pkg/encoding/json/)),
+with similar parsers, such as Go's default [JSON parser](https://golang.org/pkg/encoding/json/),
 albeit with important caveats detailed below.
 
 This library is intended to be used as an add-on for
