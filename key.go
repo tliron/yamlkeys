@@ -18,6 +18,8 @@ func KeyData(data interface{}) interface{} {
 func KeyString(data interface{}) string {
 	if string_, ok := data.(string); ok {
 		return string_
+	} else if stringer, ok := data.(fmt.Stringer); ok {
+		return stringer.String()
 	} else {
 		return fmt.Sprintf("%v", data)
 	}
