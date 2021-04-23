@@ -32,8 +32,16 @@ albeit with important caveats detailed below.
 
 This library is intended to be used as an add-on for
 [go-yaml](https://github.com/go-yaml/yaml), which can decode complex keys into its custom
-[Node](https://godoc.org/gopkg.in/yaml.v3#Node) type, but will panic when decoding them into
-basic Go data types. [See this playground.](https://play.golang.org/p/6xhXvK3UNbi)
+[Node](https://godoc.org/gopkg.in/yaml.v3#Node) type, but will fail when decoding them into
+a Go map. [See this playground.](https://play.golang.org/p/TjlTlHeDIy_C)
+
+Note that [Masaaki Goshima's go-yaml library](https://github.com/goccy/go-yaml) does not fail
+when decoding complex keys. Instead, it silently converts them to strings. This may or may not
+be suitable for your use case. The disadvantages of this approach are that it's impossible to
+distinguish between keys that are actual strings and complex keys that have been converted to
+strings, and also that you would have to convert your keys to strings, too, in order to use
+them with the map. [See this playground.](https://play.golang.org/p/wqjFi5FshAd) Our solution
+does not have these disadvantages.
 
 
 Implementation and Caveats
@@ -43,7 +51,7 @@ Supporting complex keys is non-trivial in Go, which requires keys to be triviall
 Primitives and structs of primitives are supported, but maps and slices are not. Our trick here
 is to wrap complex keys in a special type and to use a *pointer* to it as the actual key.
 Pointers "work" in that they can be used as keys without panicking (they are just integers),
-but of course the basic Go map operations — get, put, delete — are not able to take into
+but of course the basic Go map operations — get, put, delete — are unable to take into
 consideration the actual key value.
 
 For this reason we here provide replacements for basic Go map operations, which handle
@@ -59,6 +67,7 @@ This will require discipline on your end, because there is no way to enforce thi
 via the compiler. It is the cost of our insistence on using the basic Go map.
 
 An alternative solution could use an entirely different map implementation, such as
+[this one](https://github.com/cornelk/hashmap) or
 [this one](https://godoc.org/github.com/timtadh/data-structures/hashtable). In weighing the
 pros vs. the cons we preferred the basic Go map.
 
