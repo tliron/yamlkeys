@@ -140,12 +140,12 @@ func DecodeNode(node *yaml.Node) (interface{}, error) {
 		}
 	}
 
-	panic("malformed YAML node")
+	panic(fmt.Sprintf("malformed YAML node: %T", node))
 }
 
 func DecodeKeyNode(node *yaml.Node) (interface{}, interface{}, error) {
 	if data, err := DecodeNode(node); err == nil {
-		if isSimpleKey(data) {
+		if IsSimpleKey(data) {
 			return data, nil, nil
 		} else {
 			key, err := NewYAMLKey(data)

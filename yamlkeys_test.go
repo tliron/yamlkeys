@@ -53,7 +53,7 @@ func TestIterate(t *testing.T) {
 		t.Error("not a map")
 	}
 
-	for k, _ := range map_ {
+	for k := range map_ {
 		if _, ok := k.(yamlkeys.Key); !ok {
 			t.Errorf("not a Key: %v", k)
 		}

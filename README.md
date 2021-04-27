@@ -30,22 +30,31 @@ Importantly, the basic Go map is still used here in order to allow for broadest 
 with similar parsers, such as Go's default [JSON parser](https://golang.org/pkg/encoding/json/),
 albeit with important caveats detailed below.
 
-This library is intended to be used as an add-on for
-[go-yaml](https://github.com/go-yaml/yaml), which can decode complex keys into its custom
+An alternative solution could use an entirely different map implementation, such as
+[this one](https://github.com/cornelk/hashmap) or
+[this one](https://godoc.org/github.com/timtadh/data-structures/hashtable). In weighing the
+pros vs. the cons we preferred the basic Go map.
+
+This library is intended to be used as an add-on for either
+[go-yaml](https://github.com/go-yaml/yaml), which was originally developed by Canonical, or
+[Masaaki Goshima's go-yaml](https://github.com/goccy/go-yaml).
+
+The former library can decode complex keys into its custom
 [Node](https://godoc.org/gopkg.in/yaml.v3#Node) type, but will fail when decoding them into
-a Go map. [See this playground.](https://play.golang.org/p/TjlTlHeDIy_C)
+a Go map ([see this playground](https://play.golang.org/p/TjlTlHeDIy_C)). The latter library
+does not fail when decoding complex keys, but instead it silently converts them to strings
+([see this playground](https://play.golang.org/p/wqjFi5FshAd)).
 
-Note that [Masaaki Goshima's go-yaml library](https://github.com/goccy/go-yaml) does not fail
-when decoding complex keys. Instead, it silently converts them to strings. This may or may not
-be suitable for your use case. The disadvantages of this approach are that it's impossible to
-distinguish between keys that are actual strings and complex keys that have been converted to
-strings, and also that you would have to convert your keys to strings, too, in order to use
-them with the map. [See this playground.](https://play.golang.org/p/wqjFi5FshAd) Our solution
-does not have these disadvantages.
+Note that converting complex keys to strings is a workaround, not a solution. It's impossible
+to distinguish between keys that are actual strings and complex keys that have been converted
+to strings, and also you would have to convert your keys to strings, too. Our solution here
+does not have these problems.
 
 
-Implementation and Caveats
---------------------------
+Features and Limitations
+------------------------
+
+### Map Operations
 
 Supporting complex keys is non-trivial in Go, which requires keys to be trivially comparable.
 Primitives and structs of primitives are supported, but maps and slices are not. Our trick here
@@ -66,14 +75,7 @@ appear to "work" but would allow for duplicates.
 This will require discipline on your end, because there is no way to enforce this requirement
 via the compiler. It is the cost of our insistence on using the basic Go map.
 
-An alternative solution could use an entirely different map implementation, such as
-[this one](https://github.com/cornelk/hashmap) or
-[this one](https://godoc.org/github.com/timtadh/data-structures/hashtable). In weighing the
-pros vs. the cons we preferred the basic Go map.
-
-
-Typed Errors
-------------
+### Typed Errors
 
 The go-yaml library does not return typed errors, making it difficult to extract error information,
 such as the line and column in which an error occurred. For convenience we provide a `DecodeError`
@@ -82,9 +84,7 @@ with this information.
 We do this not only for yamlkeys errors, but also convert go-yaml errors by parsing the error
 message string.
 
-
-Multiple Documents
-------------------
+### Multiple Documents
 
 The go-yaml library's `decoder.Decode` function only decodes the first document it finds in the
 stream and then stops. For compatibility, we have kept the same behavior here.
@@ -93,8 +93,8 @@ However, for convenience we also provide `DecodeAll` and `DecodeStringAll` funct
 to decode the entire stream.
 
 
-Map Operation Examples
-----------------------
+Usage Examples
+--------------
 
     text := `
     {complex1: 0, complex2: 1}: value1

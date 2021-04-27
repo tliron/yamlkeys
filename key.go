@@ -73,7 +73,7 @@ func (self *YAMLKey) MarshalYAML() (interface{}, error) {
 
 // Utils
 
-func isSimpleKey(data interface{}) bool {
+func IsSimpleKey(data interface{}) bool {
 	switch data.(type) {
 	case Map, Sequence:
 		return false
