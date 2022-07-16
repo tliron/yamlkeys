@@ -1,5 +1,5 @@
 package yamlkeys
 
-type Map = map[interface{}]interface{}
+type Map = map[any]any
 
-type Sequence = []interface{}
+type Sequence = []any

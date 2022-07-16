@@ -43,7 +43,7 @@ func NewDecodeErrorFor(message string, node *yaml.Node) *DecodeError {
 	return NewDecodeError(message, node.Line, node.Column)
 }
 
-func NewDuplicateKeyErrorFor(key interface{}, node *yaml.Node) *DecodeError {
+func NewDuplicateKeyErrorFor(key any, node *yaml.Node) *DecodeError {
 	return NewDecodeErrorFor(fmt.Sprintf("duplicate map key: %s", key), node)
 }
 

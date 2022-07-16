@@ -1,6 +1,6 @@
 package yamlkeys
 
-func Equals(a interface{}, b interface{}) bool {
+func Equals(a any, b any) bool {
 	switch a_ := a.(type) {
 	case Map:
 		if bMap, ok := b.(Map); ok {

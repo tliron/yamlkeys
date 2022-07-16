@@ -1,6 +1,6 @@
 package yamlkeys
 
-func MapGet(map_ Map, key interface{}) (interface{}, bool) {
+func MapGet(map_ Map, key any) (any, bool) {
 	if IsSimpleKey(key) {
 		value, ok := map_[key]
 		return value, ok
@@ -19,7 +19,7 @@ func MapGet(map_ Map, key interface{}) (interface{}, bool) {
 	return nil, false
 }
 
-func MapPut(map_ Map, key interface{}, value interface{}) (interface{}, bool) {
+func MapPut(map_ Map, key any, value any) (any, bool) {
 	if IsSimpleKey(key) {
 		if existing, ok := map_[key]; ok {
 			map_[key] = value
@@ -60,7 +60,7 @@ func MapPut(map_ Map, key interface{}, value interface{}) (interface{}, bool) {
 	}
 }
 
-func MapDelete(map_ Map, key interface{}) (interface{}, bool) {
+func MapDelete(map_ Map, key any) (any, bool) {
 	if IsSimpleKey(key) {
 		if existing, ok := map_[key]; ok {
 			delete(map_, key)

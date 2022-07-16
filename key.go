@@ -7,7 +7,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func KeyData(data interface{}) interface{} {
+func KeyData(data any) any {
 	if key, ok := data.(Key); ok {
 		return key.GetKeyData()
 	} else {
@@ -15,7 +15,7 @@ func KeyData(data interface{}) interface{} {
 	}
 }
 
-func KeyString(data interface{}) string {
+func KeyString(data any) string {
 	if string_, ok := data.(string); ok {
 		return string_
 	} else if stringer, ok := data.(fmt.Stringer); ok {
@@ -30,7 +30,7 @@ func KeyString(data interface{}) string {
 //
 
 type Key interface {
-	GetKeyData() interface{}
+	GetKeyData() any
 }
 
 //
@@ -38,11 +38,11 @@ type Key interface {
 //
 
 type YAMLKey struct {
-	Data interface{}
+	Data any
 	Text string
 }
 
-func NewYAMLKey(data interface{}) (*YAMLKey, error) {
+func NewYAMLKey(data any) (*YAMLKey, error) {
 	var writer strings.Builder
 	encoder := yaml.NewEncoder(&writer)
 	encoder.SetIndent(1) // as compact as possible
@@ -57,7 +57,7 @@ func NewYAMLKey(data interface{}) (*YAMLKey, error) {
 }
 
 // Key interface
-func (self *YAMLKey) GetKeyData() interface{} {
+func (self *YAMLKey) GetKeyData() any {
 	return self.Data
 }
 
@@ -67,13 +67,13 @@ func (self *YAMLKey) String() string {
 }
 
 // yaml.Marshaler interface
-func (self *YAMLKey) MarshalYAML() (interface{}, error) {
+func (self *YAMLKey) MarshalYAML() (any, error) {
 	return self.Data, nil
 }
 
 // Utils
 
-func IsSimpleKey(data interface{}) bool {
+func IsSimpleKey(data any) bool {
 	switch data.(type) {
 	case Map, Sequence:
 		return false

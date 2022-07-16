@@ -8,7 +8,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func Decode(reader io.Reader) (interface{}, error) {
+func Decode(reader io.Reader) (any, error) {
 	var node yaml.Node
 	decoder := yaml.NewDecoder(reader)
 	if err := decoder.Decode(&node); err == nil {
@@ -18,9 +18,9 @@ func Decode(reader io.Reader) (interface{}, error) {
 	}
 }
 
-func DecodeAll(reader io.Reader) ([]interface{}, error) {
+func DecodeAll(reader io.Reader) ([]any, error) {
 	decoder := yaml.NewDecoder(reader)
-	var values []interface{}
+	var values []any
 	for {
 		var node yaml.Node
 		if err := decoder.Decode(&node); err == nil {
@@ -37,15 +37,15 @@ func DecodeAll(reader io.Reader) ([]interface{}, error) {
 	}
 }
 
-func DecodeString(s string) (interface{}, error) {
+func DecodeString(s string) (any, error) {
 	return Decode(strings.NewReader(s))
 }
 
-func DecodeStringAll(s string) ([]interface{}, error) {
+func DecodeStringAll(s string) ([]any, error) {
 	return DecodeAll(strings.NewReader(s))
 }
 
-func DecodeNode(node *yaml.Node) (interface{}, error) {
+func DecodeNode(node *yaml.Node) (any, error) {
 	switch node.Kind {
 	case yaml.AliasNode:
 		return DecodeNode(node.Alias)
@@ -132,7 +132,7 @@ func DecodeNode(node *yaml.Node) (interface{}, error) {
 		return slice, nil
 
 	case yaml.ScalarNode:
-		var value interface{}
+		var value any
 		if err := node.Decode(&value); err == nil {
 			return value, nil
 		} else {
@@ -143,7 +143,7 @@ func DecodeNode(node *yaml.Node) (interface{}, error) {
 	panic(fmt.Sprintf("malformed YAML node: %T", node))
 }
 
-func DecodeKeyNode(node *yaml.Node) (interface{}, interface{}, error) {
+func DecodeKeyNode(node *yaml.Node) (any, any, error) {
 	if data, err := DecodeNode(node); err == nil {
 		if IsSimpleKey(data) {
 			return data, nil, nil

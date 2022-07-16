@@ -1,6 +1,6 @@
 package yamlkeys
 
-func Clone(value interface{}) interface{} {
+func Clone(value any) any {
 	switch value_ := value.(type) {
 	case Map:
 		clone := make(Map)

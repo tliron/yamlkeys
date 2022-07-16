@@ -28,7 +28,7 @@ var textMulti = `
 {complex1: 0, complex2: 2}: value4
 `
 
-var key = map[interface{}]interface{}{
+var key = map[any]any{
 	"complex1": 0,
 	"complex2": 2,
 }
@@ -40,7 +40,7 @@ func TestDecode(t *testing.T) {
 }
 
 func TestIterate(t *testing.T) {
-	var data interface{}
+	var data any
 	var map_ yamlkeys.Map
 	var err error
 	var ok bool
@@ -61,7 +61,7 @@ func TestIterate(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
-	var data interface{}
+	var data any
 	var map_ yamlkeys.Map
 	var err error
 	var ok bool
@@ -84,7 +84,7 @@ func TestGet(t *testing.T) {
 }
 
 func TestPut(t *testing.T) {
-	var data interface{}
+	var data any
 	var map_ yamlkeys.Map
 	var err error
 	var ok bool
@@ -109,7 +109,7 @@ func TestPut(t *testing.T) {
 }
 
 func TestPrimitive(t *testing.T) {
-	var data interface{}
+	var data any
 	var value string
 	var err error
 	var ok bool
@@ -128,7 +128,7 @@ func TestPrimitive(t *testing.T) {
 }
 
 func TestGetMulti(t *testing.T) {
-	var data []interface{}
+	var data []any
 	var map_ yamlkeys.Map
 	var err error
 	var ok bool
